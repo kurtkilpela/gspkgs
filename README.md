@@ -6,6 +6,20 @@ This repository is an unofficial GemStone/S nix repository.
 
 - Support for aarch64-linux
 - GemStone/S NixOS module
+- Flake support
+
+## Adding Channel
+
+```
+nix-channel --add https://github.com/kurtkilpela/gspkgs/archive/refs/heads/main.tar.gz gspkgs
+nix-channel --update
+```
+
+## Opening a Shell
+
+```
+nix-shell -p '(import <gspkgs>{}).gemstone'
+```
 
 ## Adding New Versions
 

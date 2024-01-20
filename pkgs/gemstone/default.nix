@@ -19,62 +19,42 @@ let
           url = get-url version builtins.currentSystem;
           sha256 = platforms."${builtins.currentSystem}".sha256;
         };
-        buildInputs = [ unzip autoPatchelfHook gcc pkgs.stdenv.cc.cc.lib pkgs.libcap pkgs.libpam-wrapper pkgs.xorg.libX11 pkgs.xorg.libXft pkgs.zlib pkgs.curl pkgs.libxcrypt-legacy pkgs.oracle-instantclient ];
+        buildInputs = [ unzip gcc ] ++ lib.optionals stdenv.isLinux [ autoPatchelfHook pkgs.stdenv.cc.cc.lib pkgs.libcap pkgs.libpam-wrapper pkgs.xorg.libX11 pkgs.xorg.libXft pkgs.zlib pkgs.curl pkgs.libxcrypt-legacy pkgs.oracle-instantclient ];
         phases = [ "unpackPhase" "installPhase" ];
-        unpackPhase = ''
+        unpackPhase = lib.optionalString stdenv.isDarwin ''
           # Based on: https://github.com/NixOS/nixpkgs/blob/cec578e2b429bf59855063760d668cae355adb6d/pkgs/os-specific/darwin/aldente/default.nix#L23
-          unpackDmg() {
-            echo "File to unpack: $src"
-            if ! [[ "$src" =~ \.dmg$ ]]; then return 1; fi
-            mnt=$(mktemp -d -t ci-XXXXXXXXXX)
+          echo "File to unpack: $src"
+          if ! [[ "$src" =~ \.dmg$ ]]; then return 1; fi
+          mnt=$(mktemp -d -t ci-XXXXXXXXXX)
 
-            function finish {
-              echo "Detaching $mnt"
-              /usr/bin/hdiutil detach $mnt -force
-              rm -rf $mnt
-            }
-            trap finish EXIT
-
-            echo "Attaching $mnt"
-            /usr/bin/hdiutil attach -nobrowse -readonly $src -mountpoint $mnt
-
-            echo "What's in the mount dir"?
-            ls -la $mnt/
-
-            echo "Copying contents"
-            cp -a $mnt/GemStone64Bit${version}-arm64.Darwin ./
+          function finish {
+            echo "Detaching $mnt"
+            /usr/bin/hdiutil detach $mnt -force
+            rm -rf $mnt
           }
+          trap finish EXIT
 
-          case ${builtins.currentSystem} in
-            "x86_64-linux")
+          echo "Attaching $mnt"
+          /usr/bin/hdiutil attach -nobrowse -readonly $src -mountpoint $mnt
+
+          echo "What's in the mount dir"?
+          ls -la $mnt/
+
+          echo "Copying contents"
+          cp -a $mnt/GemStone64Bit${version}-arm64.Darwin ./
+      ''
+      + lib.optionalString stdenv.isLinux ''
               unzip $src
-              ;;
-            "aarch64-darwin")
-              unpackDmg
-              ;;
-            *)
-              echo "Unkown system"
-              exit 1
-              ;;
-          esac
-        '';
-        installPhase = ''
-          mkdir -p $out
-          case ${builtins.currentSystem} in
-            "x86_64-linux")
-              cp -a GemStone64Bit${version}-x86_64.Linux/* $out/
-              chmod -R +w $out/
-              autoPatchelf $out/
-              ;;
-            "aarch64-darwin")
-              cp -a GemStone64Bit${version}-arm64.Darwin/* $out/
-              ;;
-            *)
-              echo "Unkown system"
-              exit 1
-              ;;
-          esac
-        '';
+      '';
+      installPhase = ''
+        mkdir -p $out
+      '' + lib.optionalString stdenv.isDarwin ''
+        cp -a GemStone64Bit${version}-arm64.Darwin/* $out/
+      '' + lib.optionalString stdenv.isLinux ''
+        cp -a GemStone64Bit${version}-x86_64.Linux/* $out/
+        chmod -R +w $out/
+        autoPatchelf $out/
+      '';
 
         meta = with lib; {
           description = "GemStone/S";

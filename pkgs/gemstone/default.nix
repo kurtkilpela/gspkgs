@@ -1,6 +1,6 @@
 # This file is based on the definition of Ruby in nixpkgs.
 # See: https://github.com/NixOS/nixpkgs/blob/06e3f80d461fb0326a1784cb86d7f6d0236401f2/pkgs/development/interpreters/ruby/default.nix
-{ lib, stdenv, fetchurl, unzip } @ args:
+{ pkgs, lib, stdenv, fetchurl, unzip, autoPatchelfHook, gcc, ... } @ args:
 
 let
   get-url = (version: system:
@@ -10,7 +10,7 @@ let
     }."${system}"
   );
   public-release = { version, platforms }: let
-    self = lib.makeOverridable ({ lib, stdenv, fetchurl, unzip }:
+    self = lib.makeOverridable ({ pkgs, lib, stdenv, fetchurl, unzip, autoPatchelfHook, gcc, ... }:
       stdenv.mkDerivation rec {
         pname = "GemStone/S";
         inherit version;
@@ -19,7 +19,7 @@ let
           url = get-url version builtins.currentSystem;
           sha256 = platforms."${builtins.currentSystem}".sha256;
         };
-        buildInputs = [ unzip ];
+        buildInputs = [ unzip autoPatchelfHook gcc pkgs.stdenv.cc.cc.lib pkgs.libcap pkgs.libpam-wrapper pkgs.xorg.libX11 pkgs.xorg.libXft pkgs.zlib pkgs.curl pkgs.libxcrypt-legacy pkgs.oracle-instantclient ];
         phases = [ "unpackPhase" "installPhase" ];
         unpackPhase = ''
           # Based on: https://github.com/NixOS/nixpkgs/blob/cec578e2b429bf59855063760d668cae355adb6d/pkgs/os-specific/darwin/aldente/default.nix#L23
@@ -63,6 +63,8 @@ let
           case ${builtins.currentSystem} in
             "x86_64-linux")
               cp -a GemStone64Bit${version}-x86_64.Linux/* $out/
+              chmod -R +w $out/
+              autoPatchelf $out/
               ;;
             "aarch64-darwin")
               cp -a GemStone64Bit${version}-arm64.Darwin/* $out/

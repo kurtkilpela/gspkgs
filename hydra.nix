@@ -1,7 +1,6 @@
 # This file is based on Ruby in nixpkgs.
 # See: https://github.com/NixOS/nixpkgs/blob/c8c617e4735953976ec0048745894ceea090e2b2/pkgs/top-level/all-packages.nix#L17991
-{ system ? builtins.currentSystem, pkgs ? import <nixpkgs> {inherit system;} }:
-
+{ system ? builtins.currentSystem, pkgs ? import <nixpkgs> {config.allowUnfree=true; inherit system;} }:
 rec {  
     inherit (pkgs.callPackage ./pkgs/gemstone {})
       gemstone_3_6_0

@@ -20,7 +20,7 @@ let
           sha256 = platforms."${builtins.currentSystem}".sha256;
         };
         buildInputs = [ unzip gcc ] ++ lib.optionals stdenv.isLinux [ autoPatchelfHook pkgs.stdenv.cc.cc.lib pkgs.libcap pkgs.libpam-wrapper pkgs.xorg.libX11 pkgs.xorg.libXft pkgs.zlib pkgs.curl pkgs.libxcrypt-legacy pkgs.oracle-instantclient ];
-        phases = [ "unpackPhase" "installPhase" ];
+        phases = [ "unpackPhase" "installPhase" "fixupPhase" ];
         unpackPhase = lib.optionalString stdenv.isDarwin ''
           # Based on: https://github.com/NixOS/nixpkgs/blob/cec578e2b429bf59855063760d668cae355adb6d/pkgs/os-specific/darwin/aldente/default.nix#L23
           echo "File to unpack: $src"
@@ -52,8 +52,6 @@ let
         cp -a GemStone64Bit${version}-arm64.Darwin/* $out/
       '' + lib.optionalString stdenv.isLinux ''
         cp -a GemStone64Bit${version}-x86_64.Linux/* $out/
-        chmod -R +w $out/
-        autoPatchelf $out/
       '';
 
         meta = with lib; {
@@ -115,6 +113,11 @@ in
   gemstone_3_6_6_2 = public-release {
     version = "3.6.6.2";
     platforms."x86_64-linux".sha256 = "XWfVP3J5EYpqHjkbcxUgCoL4cRDOdpINHYlrqLMvOxw=";
+  };
+  gemstone_3_6_8 = public-release {
+    version = "3.6.8";
+    platforms."x86_64-linux".sha256 = "4ttzRNjUvUhZ/2fuZrxJIi04l9xxPnzcRP+Z/UmNd5Q=";
+    platforms."aarch64-darwin".sha256 = "j5eJ+beG+fIPk9QF3Nij8Xbcht8lj7RLqmeRtYuhqKM=";
   };
   gemstone_3_7_0 = public-release {
     version = "3.7.0";

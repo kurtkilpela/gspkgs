@@ -16,8 +16,9 @@ rec {
       gemstone_3_6_6
       gemstone_3_6_6_1
       gemstone_3_6_6_2
+      gemstone_3_6_8
       gemstone_3_7_0;
-    gemstone_3_6 = gemstone_3_6_6_2;
+    gemstone_3_6 = gemstone_3_6_8;
     gemstone_3_7 = gemstone_3_7_0;
     gemstone = gemstone_3_7;
 }

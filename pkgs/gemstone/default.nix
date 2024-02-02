@@ -37,9 +37,6 @@ let
           echo "Attaching $mnt"
           /usr/bin/hdiutil attach -nobrowse -readonly $src -mountpoint $mnt
 
-          echo "What's in the mount dir"?
-          ls -la $mnt/
-
           echo "Copying contents"
           cp -a $mnt/GemStone64Bit${version}-arm64.Darwin ./
       ''
@@ -52,6 +49,12 @@ let
         cp -a GemStone64Bit${version}-arm64.Darwin/* $out/
       '' + lib.optionalString stdenv.isLinux ''
         cp -a GemStone64Bit${version}-x86_64.Linux/* $out/
+      '' + ''
+        chmod -R +w $out/doc
+        mkdir -p $out/share/man
+        mkdir -p $out/share/doc
+        mv $out/doc/man* $out/share/man/
+        mv $out/doc $out/share/doc/gemstone
       '';
 
         meta = with lib; {

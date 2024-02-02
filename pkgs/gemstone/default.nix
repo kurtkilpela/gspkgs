@@ -6,7 +6,15 @@ let
   get-url = (version: system:
     {
       "x86_64-linux" = "https://downloads.gemtalksystems.com/pub/GemStone64/${version}/GemStone64Bit${version}-x86_64.Linux.zip";
+      "aarch64-linux" = "https://downloads.gemtalksystems.com/pub/GemStone64/${version}/GemStone64Bit${version}-arm64.Linux.zip";
       "aarch64-darwin" = "https://downloads.gemtalksystems.com/pub/GemStone64/${version}/GemStone64Bit${version}-arm64.Darwin.dmg";
+    }."${system}"
+  );
+  get-extracted-folder-name = (version: system:
+    {
+      "x86_64-linux" = "GemStone64Bit${version}-x86_64.Linux";
+      "aarch64-linux" = "GemStone64Bit${version}-arm64.Linux";
+      "aarch64-darwin" = "GemStone64Bit${version}-arm64.Darwin";
     }."${system}"
   );
   public-release = { version, platforms }: let
@@ -45,11 +53,7 @@ let
       '';
       installPhase = ''
         mkdir -p $out
-      '' + lib.optionalString stdenv.isDarwin ''
-        cp -a GemStone64Bit${version}-arm64.Darwin/* $out/
-      '' + lib.optionalString stdenv.isLinux ''
-        cp -a GemStone64Bit${version}-x86_64.Linux/* $out/
-      '' + ''
+        cp -a ${get-extracted-folder-name version builtins.currentSystem}/* $out/
         chmod -R +w $out/doc
         mkdir -p $out/share/man
         mkdir -p $out/share/doc
@@ -69,62 +73,66 @@ let
     }) args; in self;
 in
 {
-  gemstone_3_6_0 = public-release {
-    version = "3.6.0";
-    platforms."x86_64-linux".sha256 = "/cu0h8bSksWHtZiIY+2dWL0Q41PLW/QI1QHY0Q7kKnY=";
-  };
   gemstone_3_6_1 = public-release {
     version = "3.6.1";
     platforms."x86_64-linux".sha256 = "Y3Hkm4LXTDKLObLhfmblqb8iYYEYNgPGwrTtvfOWQZI=";
+    platforms."aarch64-linux".sha256 = "OmFFUYGoC7ZElbGKdSI/q1FA/39DLN+geTJPz3NoTJU=";
   };
-  gemstone_3_6_1_1 = public-release {
-    version = "3.6.1.1";
-    platforms."x86_64-linux".sha256 = "DUxtp7V+QAJWwyAooBooG120o0+kv0/hvstK3BN4vXc=";
-  };
+#  gemstone_3_6_1_1 = public-release {
+#    version = "3.6.1.1";
+#    platforms."x86_64-linux".sha256 = "DUxtp7V+QAJWwyAooBooG120o0+kv0/hvstK3BN4vXc=";
+#  };
   gemstone_3_6_2 = public-release {
     version = "3.6.2";
     platforms."x86_64-linux".sha256 = "wCdi7UJYGam3ePP3yB5bnmd/4gXUK7q53g8QnJwManc=";
+    platforms."aarch64-linux".sha256 = "Hexf5x4LSSzKDE9Yct75I49UNHmMKA544KXTULfNbN4=";
   };
   gemstone_3_6_3 = public-release {
     version = "3.6.3";
     platforms."x86_64-linux".sha256 = "uG6kE/BLInH4yyERVcvLKfTtqBs20QqpQlxhhVVRMSQ=";
+    platforms."aarch64-linux".sha256 = "F44HRvjLp/JxEhYJhczdY7krpYN//ADuArVvwtaB/9M=";
   };
   gemstone_3_6_4 = public-release {
     version = "3.6.4";
     platforms."x86_64-linux".sha256 = "E12Lhuv9GSEK8GDJ3gjjxk9jeN8Ia0sxF+jtotMEBuk=";
+    platforms."aarch64-linux".sha256 = "k/wAN/z2c6vhemC4nsRYJWpjVdOr83TKphLVjaFOLz0=";
   };
-  gemstone_3_6_4_1 = public-release {
-    version = "3.6.4.1";
-    platforms."x86_64-linux".sha256 = "ZWyM9XSx2F6P3JF4I0/e/yEsGDGzjU6RzZ4mSJkMAm8=";
-  };
+#  gemstone_3_6_4_1 = public-release {
+#    version = "3.6.4.1";
+#    platforms."x86_64-linux".sha256 = "ZWyM9XSx2F6P3JF4I0/e/yEsGDGzjU6RzZ4mSJkMAm8=";
+#  };
   gemstone_3_6_5 = public-release {
     version = "3.6.5";
     platforms."x86_64-linux".sha256 = "n5XBNfXRb8LwSjGuWVxotQIx+IRySxQJoJtRhIreJ7I=";
+    platforms."aarch64-linux".sha256 = "xSiLX/1Ihxxl3+GueMEZS/dpZYD/9G1puRu3DR9bLAw=";
   };
-  gemstone_3_6_5_1 = public-release {
-    version = "3.6.5.1";
-    platforms."x86_64-linux".sha256 = "L9uhU7ipqAaQhOcoUj934ZVgHNG8iwIp7h/id7BS4rc=";
-  };
+#  gemstone_3_6_5_1 = public-release {
+#    version = "3.6.5.1";
+#    platforms."x86_64-linux".sha256 = "L9uhU7ipqAaQhOcoUj934ZVgHNG8iwIp7h/id7BS4rc=";
+#  };
   gemstone_3_6_6 = public-release {
     version = "3.6.6";
     platforms."x86_64-linux".sha256 = "dvSA7C0Yb9k1nNX0ZYa8N9wx211f5HgENM+2jAU4Aa4=";
+    platforms."aarch64-linux".sha256 = "GtJa0J7amc7bA4z2/aNt1tg08gvYbVJWnkwx0Z6RUdY=";
   };
-  gemstone_3_6_6_1 = public-release {
-    version = "3.6.6.1";
-    platforms."x86_64-linux".sha256 = "px7v3YGIcNFO7XH4qxzQ8lQm5rBY00hiavJmx4KcOFY=";
-  };
-  gemstone_3_6_6_2 = public-release {
-    version = "3.6.6.2";
-    platforms."x86_64-linux".sha256 = "XWfVP3J5EYpqHjkbcxUgCoL4cRDOdpINHYlrqLMvOxw=";
-  };
+#  gemstone_3_6_6_1 = public-release {
+#    version = "3.6.6.1";
+#    platforms."x86_64-linux".sha256 = "px7v3YGIcNFO7XH4qxzQ8lQm5rBY00hiavJmx4KcOFY=";
+#  };
+#  gemstone_3_6_6_2 = public-release {
+#    version = "3.6.6.2";
+#    platforms."x86_64-linux".sha256 = "XWfVP3J5EYpqHjkbcxUgCoL4cRDOdpINHYlrqLMvOxw=";
+#  };
   gemstone_3_6_8 = public-release {
     version = "3.6.8";
     platforms."x86_64-linux".sha256 = "4ttzRNjUvUhZ/2fuZrxJIi04l9xxPnzcRP+Z/UmNd5Q=";
+    platforms."aarch64-linux".sha256 = "6Md/cjD77YIhUR8I1w6nvwGYava0fNyrLF5r2Xp9cl8=";
     platforms."aarch64-darwin".sha256 = "j5eJ+beG+fIPk9QF3Nij8Xbcht8lj7RLqmeRtYuhqKM=";
   };
   gemstone_3_7_0 = public-release {
     version = "3.7.0";
     platforms."x86_64-linux".sha256 = "FqCXRLLoTJ5rm8qMoEv4zPK/003rP1qOErYLQpRRNfY=";
+    platforms."aarch64-linux".sha256 = "wYIL8RLYW8lyng5seFODUxOfQMqPeMDsvt+v/fe3Je0=";
     platforms."aarch64-darwin".sha256 = "yn0BeIMPSJL+//sjHucdVzEx+2Xgsodcq5T2u2tCsZE=";
   };
 }

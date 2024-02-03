@@ -228,7 +228,7 @@ in
       baseDir = mkOption {
         default = "/var/lib/gemstone";
         type = types.str;
-        description = lib.mdDoc "Default base directory to use for GemStone Services..";
+        description = lib.mdDoc "Default base directory to use for GemStone Services. Also serves at the home directory for the `gemstone` user.";
       };
       stones = mkOption {
         default = {};

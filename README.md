@@ -4,8 +4,7 @@ This repository is an unofficial GemStone/S nix repository.
 
 ## Current Plans
 
-- Support for aarch64-linux
-- GemStone/S NixOS module
+- GemStone/S NixOS module (WIP)
 - Flake support
 
 ## Adding Channel
